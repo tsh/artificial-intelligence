@@ -53,8 +53,21 @@ def naked_twins(values):
     Pseudocode for this algorithm on github:
     https://github.com/udacity/artificial-intelligence/blob/master/Projects/1_Sudoku/pseudocode.md
     """
-    # TODO: Implement this function!
-    raise NotImplementedError
+    out = values.copy()
+    for box_a in values.keys():
+        for box_b in peers[box_a]:
+            vala, valb = values[box_a], values[box_b]
+            if is_naked_twins(vala, valb):
+                peers_a, peers_b = peers[box_a], peers[box_b]
+                for peer in peers_a.intersection(peers_b):
+                    for digit in vala:
+                        out[peer] = out[peer].replace(digit, '')
+    return out
+
+
+def is_naked_twins(val1, val2):
+    return len(val1) == len(val2) == 2 and set(val1) == set(val2)
+
 
 
 def eliminate(values):
