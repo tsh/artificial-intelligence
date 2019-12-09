@@ -83,6 +83,25 @@ def create_path(end, start, graph):
             break
     return path[::-1]
 
+def traversal(problem, datastruct):
+    start = problem.startState
+    if problem.isGoalState(start):
+        return []
+    path = {}
+    frontier = datastruct()
+    frontier.push(start)
+    explored = set()
+    while not frontier.isEmpty():
+        node = frontier.pop()
+        explored.add(node)
+        for child, direction, cost in problem.getSuccessors(node):
+            if child not in explored and child not in frontier.list:
+                path[child] = node, direction
+                if problem.isGoalState(child):
+                    return create_path(child, start, path)
+                frontier.push(child)
+    raise Exception('Not found')
+
 
 def depthFirstSearch(problem):
     """
@@ -98,30 +117,15 @@ def depthFirstSearch(problem):
     print "Is the start a goal?", problem.isGoalState(problem.getStartState())
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
-    start = problem.startState
-    if problem.isGoalState(start):
-        return []
-    path = {}
-    frontier = util.Stack()
-    frontier.push(start)
-    explored = set()
-    while not frontier.isEmpty():
-        node = frontier.pop()
-        explored.add(node)
-        for child, direction, cost in problem.getSuccessors(node):
-            if child not in explored and child not in frontier.list:
-                path[child] = node, direction
-                if problem.isGoalState(child):
-                    return create_path(child, start, path)
-                frontier.push(child)
-    raise Exception('Not found')
+    return traversal(problem, util.Stack)
 
 
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    return traversal(problem, util.Queue)
+
+
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
