@@ -182,8 +182,8 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
-def aStarSearch(problem, heuristic=nullHeuristic):
-    """Search the node that has the lowest combined cost and heuristic first."""
+
+def astar(problem, heuristic):
     start = problem.startState
     if problem.isGoalState(start):
         return []
@@ -202,6 +202,37 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 frontier.push(child, priority=heuristic(child, problem))
     raise Exception('Not found')
 
+
+def _path_to_node_priority(problem, start, target, heuristic):
+    path = {}
+    frontier = util.PriorityQueue()
+    frontier.push(start, priority=1)
+    explored = set()
+    while not frontier.isEmpty():
+        node = frontier.pop()
+        explored.add(node)
+        for child, direction, cost in problem.getSuccessors(node):
+            if child not in explored and child not in frontier.list:
+                path[child] = node, direction
+                if child == target:
+                    return child, create_path(child, start, path)
+                frontier.push(child, priority=heuristic(child, problem))
+    raise Exception('Not found')
+
+
+def aStarSearch(problem, heuristic=nullHeuristic):
+    """Search the node that has the lowest combined cost and heuristic first."""
+    from searchAgents import CornersProblem
+    if isinstance(problem, CornersProblem):
+        trail = []
+        start = problem.startingPosition
+        for corner in problem.corners:
+            child, path = _path_to_node(problem, start, corner)
+            start = child
+            trail.extend(path)
+        return trail
+    else:
+        return astar(problem, heuristic)
 
 # Abbreviations
 bfs = breadthFirstSearch
