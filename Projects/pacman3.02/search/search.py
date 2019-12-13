@@ -225,7 +225,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     from searchAgents import CornersProblem
     if isinstance(problem, CornersProblem):
         trail = []
-        start = problem.startingPosition
+        start = problem.getStartState()
         for corner in problem.corners:
             child, path = _path_to_node(problem, start, corner)
             start = child
