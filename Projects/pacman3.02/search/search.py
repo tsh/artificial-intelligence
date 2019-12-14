@@ -144,7 +144,20 @@ def breadthFirstSearch(problem):
             trail.extend(path)
         return trail
     else:
-        return traversal(problem, util.Queue)
+        start = problem.getStartState()
+        explored = set()
+        frontier = util.Queue()
+        frontier.push((start, []))
+        while not frontier.isEmpty():
+            node, path = frontier.pop()
+            if node in explored:
+                continue
+            if problem.isGoalState(node):
+                return path
+            explored.add(node)
+            for child, direction, cost in problem.getSuccessors(node):
+                frontier.push((child, path + [direction]))
+        return None
 
 
 def _path_to_node(problem, start, target):
