@@ -97,8 +97,6 @@ def traversal(problem, datastruct):
         for child, direction, cost in problem.getSuccessors(node):
             if child not in explored and child not in frontier.list:
                 path[child] = node, direction
-                if problem.isGoalState(child):
-                    return create_path(child, start, path)
                 frontier.push(child)
     raise Exception('Not found')
 
@@ -117,8 +115,45 @@ def depthFirstSearch(problem):
     print "Is the start a goal?", problem.isGoalState(problem.getStartState())
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
-    return traversal(problem, util.Stack)
+    start = problem.getStartState()
+    explored = set()
+    frontier = util.Stack()
+    frontier.push((start, []))
+    while not frontier.isEmpty():
+        node, path = frontier.pop()
+        explored.add(node)
+        if problem.isGoalState(node):
+            return path
+        for child, direction, cost in problem.getSuccessors(node):
+            if child in explored:
+                continue
+            frontier.push((child, path + [direction]))
+    return None
 
+
+
+
+    # fringe = util.Stack()
+    # # Just location, like [7, 7]
+    # startLocation = problem.getStartState()
+    # # (location, path)
+    # startNode = (startLocation, [])
+    # fringe.push(startNode)
+    # visitedLocation = set()
+    #
+    # while not fringe.isEmpty():
+    #     # node[0] is location, while node[1] is path
+    #     node = fringe.pop()
+    #     visitedLocation.add(node[0])
+    #     if problem.isGoalState(node[0]):
+    #         return node[1]
+    #     successors = problem.getSuccessors(node[0])
+    #     for item in successors:
+    #         if item[0] in visitedLocation:
+    #             continue
+    #         fringe.push((item[0], node[1] + [item[1]]))
+    #
+    # return None
 
 
 def breadthFirstSearch(problem):
