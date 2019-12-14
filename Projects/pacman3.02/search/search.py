@@ -131,31 +131,6 @@ def depthFirstSearch(problem):
     return None
 
 
-
-
-    # fringe = util.Stack()
-    # # Just location, like [7, 7]
-    # startLocation = problem.getStartState()
-    # # (location, path)
-    # startNode = (startLocation, [])
-    # fringe.push(startNode)
-    # visitedLocation = set()
-    #
-    # while not fringe.isEmpty():
-    #     # node[0] is location, while node[1] is path
-    #     node = fringe.pop()
-    #     visitedLocation.add(node[0])
-    #     if problem.isGoalState(node[0]):
-    #         return node[1]
-    #     successors = problem.getSuccessors(node[0])
-    #     for item in successors:
-    #         if item[0] in visitedLocation:
-    #             continue
-    #         fringe.push((item[0], node[1] + [item[1]]))
-    #
-    # return None
-
-
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     from searchAgents import CornersProblem
