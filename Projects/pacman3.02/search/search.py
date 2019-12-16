@@ -180,23 +180,23 @@ def _path_to_node(problem, start, target):
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
-    start = problem.startState
+    start = problem.getStartState()
     if problem.isGoalState(start):
         return []
-    path = {}
     frontier = util.PriorityQueue()
-    frontier.push(start, priority=1)
+    frontier.push((start, [], 0), priority=0)
     explored = set()
     while not frontier.isEmpty():
-        node = frontier.pop()
+        node, path, cost = frontier.pop()
+        if node in explored:
+            continue
+        if problem.isGoalState(node):
+            return path
         explored.add(node)
-        for child, direction, cost in problem.getSuccessors(node):
-            if child not in explored:
-                path[child] = node, direction
-                if problem.isGoalState(child):
-                    return create_path(child, start, path)
-                frontier.push(child, priority=cost)
-    raise Exception('Not found')
+        for child, direction, child_cost in problem.getSuccessors(node):
+            cum_cost = child_cost + cost
+            frontier.push((child, path + [direction], cum_cost), priority=cum_cost)
+    return None
 
 def nullHeuristic(state, problem=None):
     """
