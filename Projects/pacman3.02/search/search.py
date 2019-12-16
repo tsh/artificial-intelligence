@@ -206,26 +206,6 @@ def nullHeuristic(state, problem=None):
     return 0
 
 
-def astar(problem, heuristic):
-    start = problem.startState
-    if problem.isGoalState(start):
-        return []
-    path = {}
-    frontier = util.PriorityQueue()
-    frontier.push(start, priority=1)
-    explored = set()
-    while not frontier.isEmpty():
-        node = frontier.pop()
-        explored.add(node)
-        for child, direction, _ in problem.getSuccessors(node):
-            if child not in explored:
-                path[child] = node, direction
-                if problem.isGoalState(child):
-                    return create_path(child, start, path)
-                frontier.push(child, priority=heuristic(child, problem))
-    raise Exception('Not found')
-
-
 def _path_to_node_priority(problem, start, target, heuristic):
     path = {}
     frontier = util.PriorityQueue()
@@ -245,17 +225,22 @@ def _path_to_node_priority(problem, start, target, heuristic):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    from searchAgents import CornersProblem
-    if isinstance(problem, CornersProblem):
-        trail = []
-        start = problem.getStartState()
-        for corner in problem.corners:
-            child, path = _path_to_node(problem, start, corner)
-            start = child
-            trail.extend(path)
-        return trail
-    else:
-        return astar(problem, heuristic)
+    start = problem.getStartState()
+    visited = set()
+    frontier = util.PriorityQueue()
+    frontier.push((start, [], 0), priority=0)
+    while not frontier.isEmpty():
+        node, path, node_cost = frontier.pop()
+        if problem.isGoalState(node):
+            return path
+        if node in visited:
+            continue
+        for child, direction, child_cost in problem.getSuccessors(node):
+            expand_cost = node_cost + child_cost
+            total_cost = expand_cost + heuristic(child, problem)
+            frontier.push((child, path + [direction], expand_cost), priority=total_cost)
+        visited.add(node)
+
 
 # Abbreviations
 bfs = breadthFirstSearch
