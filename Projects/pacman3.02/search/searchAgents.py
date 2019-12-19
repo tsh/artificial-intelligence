@@ -287,24 +287,20 @@ class CornersProblem(search.SearchProblem):
         self._expanded = 0 # DO NOT CHANGE; Number of search nodes expanded
         # Please add any code here which you would like to use
         # in initializing the problem
-        self.eaten = set()
 
     def getStartState(self):
         """
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        "*** YOUR CODE HERE ***"
-        return self.startingPosition
+        return (self.startingPosition, self.corners)
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        return state in self.corners
-
-    def is_done(self):
-        return self.eaten == set(self.corners)
+        pos, corners = state
+        return len(corners) == 0
 
     def getSuccessors(self, state):
         """
@@ -318,15 +314,21 @@ class CornersProblem(search.SearchProblem):
         """
 
         successors = []
+        position, orig_corners = state
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
-            x,y = state
+            x,y = position
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
             hitsWall = self.walls[nextx][nexty]
             if not hitsWall:
-                successors.append(((nextx, nexty), action, 1))
+                future_position = (nextx, nexty)
+                if future_position in orig_corners:
+                    corners = self.rm_corner(orig_corners, future_position)
+                else:
+                    corners = orig_corners
+                successors.append(((future_position, corners), action, 1))
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
@@ -343,6 +345,9 @@ class CornersProblem(search.SearchProblem):
             x, y = int(x + dx), int(y + dy)
             if self.walls[x][y]: return 999999
         return len(actions)
+
+    def rm_corner(self, tpl, el):
+        return tuple(x for x in tpl if x != el)
 
 
 def cornersHeuristic(state, problem):

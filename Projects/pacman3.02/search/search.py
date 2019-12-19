@@ -133,31 +133,20 @@ def depthFirstSearch(problem):
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    from searchAgents import CornersProblem
-
-    if isinstance(problem, CornersProblem):
-        trail = []
-        start = problem.startingPosition
-        for corner in problem.corners:
-            child, path = _path_to_node(problem, start, corner)
-            start = child
-            trail.extend(path)
-        return trail
-    else:
-        start = problem.getStartState()
-        explored = set()
-        frontier = util.Queue()
-        frontier.push((start, []))
-        while not frontier.isEmpty():
-            node, path = frontier.pop()
-            if node in explored:
-                continue
-            if problem.isGoalState(node):
-                return path
-            explored.add(node)
-            for child, direction, cost in problem.getSuccessors(node):
-                frontier.push((child, path + [direction]))
-        return None
+    start = problem.getStartState()
+    explored = set()
+    frontier = util.Queue()
+    frontier.push((start, []))
+    while not frontier.isEmpty():
+        node, path = frontier.pop()
+        if node in explored:
+            continue
+        if problem.isGoalState(node):
+            return path
+        explored.add(node)
+        for child, direction, cost in problem.getSuccessors(node):
+            frontier.push((child, path + [direction]))
+    return None
 
 
 def _path_to_node(problem, start, target):
