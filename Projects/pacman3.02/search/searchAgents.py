@@ -350,6 +350,10 @@ class CornersProblem(search.SearchProblem):
         return tuple(x for x in tpl if x != el)
 
 
+manhattan_distance = lambda c1, c2: abs(c1[0] - c2[0]) + abs(c1[1] - c2[1])
+euclidean_distance = lambda c1, c2: ( (c1[0] - c2[0]) ** 2 + (c1[1] - c2[1]) ** 2 ) ** 0.5
+
+
 def cornersHeuristic(state, problem):
     """
     A heuristic for the CornersProblem that you defined.
@@ -363,11 +367,23 @@ def cornersHeuristic(state, problem):
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
     """
-    corners = problem.corners # These are the corner coordinates
-    walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
+    pos, corners = state # These are the corner coordinates
+    h = 0
+    corners_left = list(corners)
+    while corners_left:
+        # distance to each corners from current position
+        distances = {manhattan_distance(pos, corner): corner for corner in corners_left}
+        distance = min(distances)
+        closest_corner = distances[distance]
 
-    "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+        # let's go to the closest corner
+        h += distance
+        corners_left.remove(closest_corner)
+        pos = closest_corner
+    return h
+
+
+
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
