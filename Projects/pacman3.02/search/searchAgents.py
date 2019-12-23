@@ -475,9 +475,44 @@ def foodHeuristic(state, problem):
     Subsequent calls to this heuristic can access
     problem.heuristicInfo['wallCount']
     """
-    position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    return 0
+    # position, foodGrid = state
+    # "*** YOUR CODE HERE ***"
+    # h = 0
+    # if 'food_map' not in problem.heuristicInfo:
+    #     problem.heuristicInfo['food_dist'] = {}
+    #     problem.heuristicInfo['dist_food'] = {}
+    #     for food in foodGrid.asList():
+    #         for next_food in foodGrid.asList():
+    #             if food == next_food:
+    #                 continue
+    #             dist = manhattan_distance(food, next_food)
+    #             problem.heuristicInfo['food_dist'][food] = dist
+    #             problem.heuristicInfo['dist_food'][dist] = food
+    #
+    #     food_left = foodGrid.asList()
+    #     if food_left:
+    #         min_dist_map = {manhattan_distance(position, fl): fl for fl in food_left}
+    #         min_dist = min(min_dist_map)
+    #         min_food = min_dist_map[min_dist]
+    #     else:
+    #         min_dist = 0
+    #     h += min_dist
+    # return h
+    pos, corners = state # These are the corner coordinates
+    h = 0
+    corners_left = list(corners)
+    while corners_left:
+        # distance to each corners from current position
+        distances = {manhattan_distance(pos, corner): corner for corner in corners_left}
+        distance = min(distances)
+        closest_corner = distances[distance]
+
+        # let's go to the closest corner
+        h += distance
+        corners_left.remove(closest_corner)
+        pos = closest_corner
+    return h
+
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
