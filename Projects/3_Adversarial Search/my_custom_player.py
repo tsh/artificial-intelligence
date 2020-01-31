@@ -1,4 +1,4 @@
-
+import random
 from sample_players import DataPlayer
 
 
@@ -19,6 +19,15 @@ class CustomPlayer(DataPlayer):
       any pickleable object to the self.context attribute.
     **********************************************************************
     """
+
+    def score(self, state):
+        own_loc = state.locs[self.player_id]
+        own_liberties = state.liberties(own_loc)
+        return len(own_liberties)
+
+    def random(self, state):
+        return random.choice(state.actions()) 
+
     def get_action(self, state):
         """ Employ an adversarial search technique to choose an action
         available in the current state calls self.queue.put(ACTION) at least
@@ -36,11 +45,7 @@ class CustomPlayer(DataPlayer):
           Refer to (and use!) the Isolation.play() function to run games.
         **********************************************************************
         """
-        # TODO: Replace the example implementation below with your own search
-        #       method by combining techniques from lecture
-        #
-        # EXAMPLE: choose a random move without any search--this function MUST
-        #          call self.queue.put(ACTION) at least once before time expires
-        #          (the timer is automatically managed for you)
-        import random
-        self.queue.put(random.choice(state.actions()))
+        if state in self.data:
+            self.queue.put(self.data[state])
+        else:
+            self.queue.put(self.random(state))
